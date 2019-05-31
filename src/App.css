@@ -31,3 +31,55 @@
     transform: rotate(360deg);
   }
 }
+
+.app {
+  display: flex;
+  justify-content: center;
+  background-color: beige;
+}
+
+.card {
+  width: 200px;
+  height: 130px;
+  color: chocolate;
+  background-color: #61dafb;
+  border: 5px black;
+  outline: 2px dashed rgba(255,255,255,0.8); /* Пунктирная рамка */
+  outline-offset: -10px; /* Выводим рамку внутри элемента */
+  padding: 10px; /* Поля */
+  display: inline-flex;
+  justify-content: center;
+
+}
+
+.cardset {
+  width: 1000px;
+  height: 450px;
+  background-color: burlywood;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding-top: 80px;
+  margin-top: 20px;
+  border-radius: 50px;
+  padding-left: 50px;
+}
+
+.empty {
+  width: 1000px;
+  height: 450px;
+  background-color: darkseagreen;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding-top: 80px;
+  margin-top: 20px;
+  border-radius: 50px;
+  padding-left: 50px;
+}
+
+.card--red{
+  background-color: darkseagreen;
+}
+
+
