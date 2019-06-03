@@ -7,6 +7,7 @@ export default class Card extends React.Component{
 
     render() {
         return(
+            !this.props.isClicked &&
             <Col className='card'  style={{background: this.props.style}} onClick={(e) => this.props.onPress(this.props.value)} >Карточка {this.props.value}</Col>
         );
     }

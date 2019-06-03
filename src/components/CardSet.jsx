@@ -38,7 +38,8 @@ export default class CardSet extends React.Component{
             el.cardStyle = 'empty';
         });
         this.setState({
-           cards: emptyCards
+            cards: emptyCards,
+            isClicked: true
         });
 
     }
@@ -64,6 +65,7 @@ export default class CardSet extends React.Component{
                                     value={id}
                                     style={el.cardStyle}
                                     onPress={this.changeColor}
+                                    isClicked={this.state.isClicked}
                                     />
 
                             )}
