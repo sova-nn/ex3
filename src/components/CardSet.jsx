@@ -1,28 +1,28 @@
 import React from 'react';
 import Card from './Card';
-import {Container, Row, Col} from "react-bootstrap";
+import {Container, Row} from "react-bootstrap";
 
 export default class CardSet extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
             isClicked: false,
-            color: 'blue',
+            // color: this.cards.cardStyleColoured,
+            cards: [
+                { cardId: 0, cardStyle: 'empty', cardStyleColoured: 'darkseagreen'},
+                { cardId: 1, cardStyle: 'empty', cardStyleColoured: 'darkkhaki'},
+                { cardId: 2, cardStyle: 'empty', cardStyleColoured: 'darkseagreen'},
+                { cardId: 3, cardStyle: 'empty', cardStyleColoured: 'darkkhaki'},
+                { cardId: 4, cardStyle: 'empty', cardStyleColoured: 'sandybrown'},
+                { cardId: 5, cardStyle: 'empty', cardStyleColoured: 'lightseagreen'},
+                { cardId: 6, cardStyle: 'empty', cardStyleColoured: 'lightseagreen'},
+                { cardId: 7, cardStyle: 'empty', cardStyleColoured: 'sandybrown'},
+            ]
         };
-
-        this.cards = [
-            { cardId: 0, cardStyle: 'empty', cardStyleColoured: 'red'},
-            { cardId: 1, cardStyle: 'empty', cardStyleColoured: 'blue'},
-            { cardId: 2, cardStyle: 'empty', cardStyleColoured: 'red'},
-            { cardId: 3, cardStyle: 'empty', cardStyleColoured: 'blue'},
-            { cardId: 4, cardStyle: 'empty', cardStyleColoured: 'black'},
-            { cardId: 5, cardStyle: 'empty', cardStyleColoured: 'black'},
-            { cardId: 6, cardStyle: 'empty', cardStyleColoured: 'green'},
-            { cardId: 7, cardStyle: 'empty', cardStyleColoured: 'green'},
-        ];
 
         this.handleClick = this.handleClick.bind(this);
         this.changeColor = this.changeColor.bind(this);
+        this.empty = this.empty.bind(this);
     }
 
     handleClick(){
@@ -32,12 +32,22 @@ export default class CardSet extends React.Component{
         console.log('button clicked');
     }
 
-    // SetOpen() {
-    //     this.
-    // }
-    changeColor (){
+    empty() {
+        const emptyCards = this.state.cards;
+        emptyCards.forEach((el) => {
+            el.cardStyle = 'empty';
+        });
         this.setState({
-            color: 'yellow'
+           cards: emptyCards
+        });
+
+    }
+
+    changeColor (cardId){
+        const newCards = this.state.cards;
+        newCards[cardId].cardStyle = newCards[cardId].cardStyleColoured;
+        this.setState({
+            cards: newCards
         });
     }
 
@@ -48,20 +58,20 @@ export default class CardSet extends React.Component{
                 <div className='cardset'>
                     <Container>
                         <Row>
-                            {this.cards.map((card) =>
+                            {this.state.cards.map((el, id) =>
                                 <Card
-                                    key={card.cardId}
-                                    id={card.cardId}
-                                    style={card.cardStyle}
-                                    styleColoured={card.cardStyleColoured}
-                                    name={this.state.isClicked}
-                                    cangeColor={this.changeColor}
+                                    key={el.cardId}
+                                    value={id}
+                                    style={el.cardStyle}
+                                    onPress={this.changeColor}
                                     />
+
                             )}
+                            <button onClick={() => this.empty()}>Мне надоело играть</button>
                         </Row>
                     </Container>
                 </div>
-                <button onClick={ () => this.handleClick() }>Тык</button>
+                  <button onClick={this.empty}>Тык</button>
             </div>
         );
     }
