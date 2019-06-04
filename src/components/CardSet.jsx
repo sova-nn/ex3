@@ -53,19 +53,17 @@ export default class CardSet extends React.Component{
         console.log(this.state);
     }
 
-    filter = memoize(
-        (list, cards) => list.filter(item => item.text.includes(cards))
-    );
+
 
 
     render() {
-        const cards = this.filter(this.props.cards, this.state.cards);
+        const mycards = this.state.cards;
         return (
             <div>
                 <div className='cardset'>
                     <Container>
                         <Row>
-                            {cards.map((el, id) =>
+                            {mycards.map((el, id) =>
                                 <Card
                                     key={id}
                                     {... el}
