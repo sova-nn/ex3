@@ -9,14 +9,14 @@ export default class CardSet extends React.Component{
             isClicked: false,
             // color: this.cards.cardStyleColoured,
             cards: [
-                { cardId: 0, cardStyle: 'empty', cardStyleColoured: 'darkseagreen'},
-                { cardId: 1, cardStyle: 'empty', cardStyleColoured: 'darkkhaki'},
-                { cardId: 2, cardStyle: 'empty', cardStyleColoured: 'darkseagreen'},
-                { cardId: 3, cardStyle: 'empty', cardStyleColoured: 'darkkhaki'},
-                { cardId: 4, cardStyle: 'empty', cardStyleColoured: 'sandybrown'},
-                { cardId: 5, cardStyle: 'empty', cardStyleColoured: 'lightseagreen'},
-                { cardId: 6, cardStyle: 'empty', cardStyleColoured: 'lightseagreen'},
-                { cardId: 7, cardStyle: 'empty', cardStyleColoured: 'sandybrown'},
+                { cardId: 0, cardStyle: 'transparent', cardStyleColoured: 'darkseagreen'},
+                { cardId: 1, cardStyle: 'transparent', cardStyleColoured: 'darkkhaki'},
+                { cardId: 2, cardStyle: 'transparent', cardStyleColoured: 'darkseagreen'},
+                { cardId: 3, cardStyle: 'transparent', cardStyleColoured: 'darkkhaki'},
+                { cardId: 4, cardStyle: 'transparent', cardStyleColoured: 'sandybrown'},
+                { cardId: 5, cardStyle: 'transparent', cardStyleColoured: 'lightseagreen'},
+                { cardId: 6, cardStyle: 'transparent', cardStyleColoured: 'lightseagreen'},
+                { cardId: 7, cardStyle: 'transparent', cardStyleColoured: 'sandybrown'},
             ]
         };
 
@@ -39,7 +39,8 @@ export default class CardSet extends React.Component{
     // я не понимаю, почему после изменения стейта не меняются дочерние компоненты Card
     empty = () => {
         this.setState((state) => {
-            state.cards[0].cardStyle = 'ooooooo'
+            state.cards[0].cardStyle = 'transparent'
+            return state;
         });
         console.log(this.state);
     }
@@ -69,7 +70,7 @@ export default class CardSet extends React.Component{
                                     {... el}
                                     onPress={this.changeColor}
                                     isClicked={this.state.isClicked}
-                                    />
+                                />
                             )}
                             <button onClick={this.empty}>Мне надоело играть</button>
                         </Row>
