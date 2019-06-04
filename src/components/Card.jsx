@@ -5,10 +5,12 @@ export default class Card extends React.Component{
 //    style={{background: this.props.styleColoured}}
 
 
+
     render() {
+        const cardStyle = this.props.cardStyle;
         return(
             !this.props.isClicked &&
-            <Col className='card'  style={{background: this.props.style}} onClick={(e) => this.props.onPress(this.props.value)} >Карточка {this.props.value}</Col>
+            <Col className='card'  style={{background: cardStyle}} onClick={(e) => this.props.onPress(this.props.cardId)} >Карточка {this.props.value}</Col>
         );
     }
 }

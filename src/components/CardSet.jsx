@@ -25,6 +25,10 @@ export default class CardSet extends React.Component{
         this.empty = this.empty.bind(this);
     }
 
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.state.cards !== nextState.cards
+    // }
+
     handleClick(){
         this.setState({
             isClicked: !this.state.isClicked
@@ -32,16 +36,12 @@ export default class CardSet extends React.Component{
         console.log('button clicked');
     }
 
-    empty() {
-        const emptyCards = this.state.cards;
-        emptyCards.forEach((el) => {
-            el.cardStyle = 'empty';
+    // я не понимаю, почему после изменения стейта не меняются дочерние компоненты Card
+    empty = () => {
+        this.setState((state) => {
+            state.cards[0].cardStyle = 'ooooooo'
         });
-        this.setState({
-            cards: emptyCards,
-            isClicked: true
-        });
-
+        console.log(this.state);
     }
 
     changeColor (cardId){
@@ -50,30 +50,33 @@ export default class CardSet extends React.Component{
         this.setState({
             cards: newCards
         });
+        console.log(this.state);
     }
+
+    filter = memoize(
+        (list, cards) => list.filter(item => item.text.includes(cards))
+    );
 
 
     render() {
+        const cards = this.filter(this.props.cards, this.state.cards);
         return (
             <div>
                 <div className='cardset'>
                     <Container>
                         <Row>
-                            {this.state.cards.map((el, id) =>
+                            {cards.map((el, id) =>
                                 <Card
-                                    key={el.cardId}
-                                    value={id}
-                                    style={el.cardStyle}
+                                    key={id}
+                                    {... el}
                                     onPress={this.changeColor}
                                     isClicked={this.state.isClicked}
                                     />
-
                             )}
-                            <button onClick={() => this.empty()}>Мне надоело играть</button>
+                            <button onClick={this.empty}>Мне надоело играть</button>
                         </Row>
                     </Container>
                 </div>
-                  <button onClick={this.empty}>Тык</button>
             </div>
         );
     }
