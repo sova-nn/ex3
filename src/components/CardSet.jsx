@@ -2,6 +2,8 @@ import React from 'react';
 import Card from './Card';
 import {Container, Row} from "react-bootstrap";
 
+const CARD_BLUE = '#61dafb';
+
 export default class CardSet extends React.Component{
     constructor(props) {
         super(props);
@@ -9,21 +11,26 @@ export default class CardSet extends React.Component{
             isClicked: false,
             isPare: false,
             cards: [
-                { cardId: 0, cardStyle: '#61dafb', cardStyleColoured: 'darkseagreen'},
-                { cardId: 1, cardStyle: '#61dafb', cardStyleColoured: 'darkkhaki'},
-                { cardId: 2, cardStyle: '#61dafb', cardStyleColoured: 'darkseagreen'},
-                { cardId: 3, cardStyle: '#61dafb', cardStyleColoured: 'darkkhaki'},
-                { cardId: 4, cardStyle: '#61dafb', cardStyleColoured: 'sandybrown'},
-                { cardId: 5, cardStyle: '#61dafb', cardStyleColoured: 'lightseagreen'},
-                { cardId: 6, cardStyle: '#61dafb', cardStyleColoured: 'lightseagreen'},
-                { cardId: 7, cardStyle: '#61dafb', cardStyleColoured: 'sandybrown'},
+                { cardId: 0, cardStyle: CARD_BLUE, cardStyleColoured: 'darkseagreen'},
+                { cardId: 1, cardStyle: CARD_BLUE, cardStyleColoured: 'darkkhaki'},
+                { cardId: 2, cardStyle: CARD_BLUE, cardStyleColoured: 'darkseagreen'},
+                { cardId: 3, cardStyle: CARD_BLUE, cardStyleColoured: 'darkkhaki'},
+                { cardId: 4, cardStyle: CARD_BLUE, cardStyleColoured: 'sandybrown'},
+                { cardId: 5, cardStyle: CARD_BLUE, cardStyleColoured: 'lightseagreen'},
+                { cardId: 6, cardStyle: CARD_BLUE, cardStyleColoured: 'lightseagreen'},
+                { cardId: 7, cardStyle: CARD_BLUE, cardStyleColoured: 'sandybrown'},
+            ],
+
+            ex: [
+                { cardId: 5, cardStyle: '#61dafb', cardStyleColoured: 'darkseagreen'},
+                { cardId: 6, cardStyle: '#61dafb', cardStyleColoured: 'darkseagreen'}
             ]
         };
 
-         this.changeColor = this.changeColor.bind(this);
+        this.changeColor = this.changeColor.bind(this);
         this.empty = this.empty.bind(this);
         this.matchCardsColors = this.matchCardsColors.bind(this);
-        // CardSet.isTwo = CardSet.isTwo.bind(this);
+        this.isTwo = this.isTwo.bind(this);
         this.setColor = this.setColor.bind(this);
     }
 
@@ -33,7 +40,7 @@ export default class CardSet extends React.Component{
     empty = () => {
         this.setState((state) => {
             state.cards.map((el) => {
-                el.cardStyle = '#61dafb';
+                el.cardStyle = CARD_BLUE;
             })
             return state;
         });
@@ -59,14 +66,22 @@ export default class CardSet extends React.Component{
 
 
     //проверка, что карт в объекте 2 (возвращает true/false)
-    static isTwo(cards) {
-        return (Object.keys(cards).length === 2);
+    isTwo(cards) {
+        return (cards.length === 2);
     }
 
-    //установка фона для пары одинаковых карт (их всего 2, нет смысла использовать map)
-    setColor(cardId, color) {
+    //установка фона для пары одинаковых карт (их всего 2, нет смысла использовать map) - тут функция с конями в вакууме, я не знаю, как сделать по-другому
+    // функция проверена, работает
+    setColor(cards, color) {
         const newCards = this.state.cards;
-        newCards[cardId].cardStyle = color;
+
+        newCards.map((el) => {
+            cards.forEach(function(item) {
+                    return ((el.cardId === item.cardId) ? el.cardStyle = color : el.cardStyle);
+                 });
+        });
+
+
         this.setState((state) => {
             state.cards = newCards;
             state.isPare = false;
@@ -75,20 +90,17 @@ export default class CardSet extends React.Component{
     }
 
     //если цвет карт совпадает, карты будут прозрачными, если нет, то исходного цвета
-    matchCardsColors() {
+    // если нажато 3 или 1 карта, но карты становятся исходного цвета
+    matchCardsColors =() => {
         // массив возвращает объект, содержащий 2 открытые карты
-        const openedCards = (this.state.cards.filter((card) => {return (card.cardStyle !== '#61dafb');}));
-        (CardSet.isTwo(openedCards) ? this.setColor(openedCards,'transparent') : this.setColor(openedCards,'#61dafb'));
+        const openedCards = (this.state.cards.filter((card) => {return ((card.cardStyle !== CARD_BLUE) & (card.cardStyle !== 'transparent'));}));
+        ((this.isTwo(openedCards) && openedCards[0].cardStyle === openedCards[1].cardStyle) ? this.setColor(openedCards,'transparent') : this.setColor(openedCards,CARD_BLUE));
+        console.log(openedCards);
     }
-
-
-
-
-
 
     render() {
         const mycards = this.state.cards;
-        // this.state.isPare && this.matchCardsColors();
+        //this.state.isPare && this.matchCardsColors();
         return (
             <div>
                 <div className='cardset'>
@@ -104,7 +116,8 @@ export default class CardSet extends React.Component{
                             )}
 
                             <button onClick={this.empty}>Мне надоело играть</button>
-                            <button onClick={this.setColor(this.state.cards, 'blue')}>Всем синий!</button>
+
+                            <button onClick={this.matchCardsColors}>Проверка цвета</button>
                         </Row>
                     </Container>
                 </div>
