@@ -1,6 +1,8 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 
+const CARD_BLUE = '#61dafb';
+
 export default class Card extends React.Component{
 //    style={{background: this.props.styleColoured}}
 
@@ -8,9 +10,12 @@ export default class Card extends React.Component{
 
     render() {
         const cardStyle = this.props.cardStyle;
+
         return(
-            !this.props.isClicked &&
-            <Col className='card'  style={{background: cardStyle}} onClick={(e) => this.props.onPress(this.props.cardId)} >Карточка {this.props.cardId}</Col>
+            <Col className='card'
+                 style={{background: cardStyle}}
+                 onClick={((this.props.cardStyle === CARD_BLUE) && (!this.props.isPare)) ? ((e) => this.props.onPress(this.props.cardId)) : undefined}
+            />
         );
     }
 }

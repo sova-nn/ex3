@@ -22,8 +22,8 @@ export default class CardSet extends React.Component{
             ],
 
             ex: [
-                { cardId: 5, cardStyle: '#61dafb', cardStyleColoured: 'darkseagreen'},
-                { cardId: 6, cardStyle: '#61dafb', cardStyleColoured: 'darkseagreen'}
+                { cardId: 5, cardStyle: 'CARD_BLUE', cardStyleColoured: 'darkseagreen'},
+                { cardId: 6, cardStyle: 'CARD_BLUE', cardStyleColoured: 'darkseagreen'}
             ]
         };
 
@@ -32,6 +32,7 @@ export default class CardSet extends React.Component{
         this.matchCardsColors = this.matchCardsColors.bind(this);
         this.isTwo = this.isTwo.bind(this);
         this.setColor = this.setColor.bind(this);
+
     }
 
 
@@ -41,10 +42,9 @@ export default class CardSet extends React.Component{
         this.setState((state) => {
             state.cards.map((el) => {
                 el.cardStyle = CARD_BLUE;
-            })
+            });
             return state;
         });
-        console.log(this.state);
     }
 
     // смена цвета при открытии карты + установка маркера
@@ -52,16 +52,21 @@ export default class CardSet extends React.Component{
         const newCards = this.state.cards;
         newCards[cardId].cardStyle = newCards[cardId].cardStyleColoured;
         (this.state.isClicked) ?
-            this.setState({
-                cards: newCards,
-                isClicked: true
-            })
+            (this.setState(state => {
+                state.cards = newCards;
+                state.isPare = true;
+                console.log('color changed', this.state);
+                return state;
+            }))
             :
-            this.setState({
-                cards: newCards,
-                isPare: true
-            });
-        console.log(this.state);
+            (this.setState(state => {
+                state.cards = newCards;
+                state.isClicked = true;
+
+                console.log('color changed', this.state);
+                return state;
+            }));
+
     }
 
 
@@ -81,16 +86,16 @@ export default class CardSet extends React.Component{
                  });
         });
 
-
         this.setState((state) => {
             state.cards = newCards;
             state.isPare = false;
+            state.isClicked = false;
             return state;
         });
     }
 
     //если цвет карт совпадает, карты будут прозрачными, если нет, то исходного цвета
-    // если нажато 3 или 1 карта, но карты становятся исходного цвета
+    // если нажато 3 или 1 карта, то карты становятся исходного цвета
     matchCardsColors =() => {
         // массив возвращает объект, содержащий 2 открытые карты
         const openedCards = (this.state.cards.filter((card) => {return ((card.cardStyle !== CARD_BLUE) & (card.cardStyle !== 'transparent'));}));
@@ -112,12 +117,13 @@ export default class CardSet extends React.Component{
                                     {... el}
                                     onPress={this.changeColor}
                                     isClicked={this.state.isClicked}
+                                    isPare={this.state.isPare}
+                                    //matchCards={setTimeout((this.matchCardsColors), 500)}
                                 />
                             )}
 
-                            <button onClick={this.empty}>Мне надоело играть</button>
-
-                            <button onClick={this.matchCardsColors}>Проверка цвета</button>
+                            <button onClick={this.empty}>Хочу играть заново</button>
+                            <button onClick={() => setTimeout((this.matchCardsColors), 500)}>Проверка цвета</button>
                         </Row>
                     </Container>
                 </div>
