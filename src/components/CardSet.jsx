@@ -37,59 +37,33 @@ export default class CardSet extends React.Component{
         this.loadStatus();
     };
 
-    //пока возвращение исходного цвета
-    empty = () => {
-        this.setState((state) => {
-            state.cards.map((el) => {
-                el.cardStyle = CARD_BLUE;
+    //пока возвращение исходного цвета, потом будет не нужен
+    empty() {
+        axios.get('http://localhost:3001/cards/new-game')
+            .then((res) => {
+                this.setState({
+                    cards: res.data.cards,
+                    isPare: res.data.isPare,
+                    isClicked: res.data.isClicked,
+                    isLoaded: true
+                });
             });
-            state.isClicked = false;
-            state.isPare = false;
-            return state;
-        });
-    };
-
-    changePlayer() {
-        this.setState({
-            Player1: true
-        })
     }
 
     //смена цвета при открытии карты + установка маркера
-    // changeColor (cardId){
-    //     const newCards = this.state.cards;
-    //     newCards[cardId].cardStyle = newCards[cardId].cardStyleColoured;
-    //     (this.state.isClicked) ?
-    //         (this.setState(state => {
-    //             state.cards = newCards;
-    //             state.isPare = true;
-    //             console.log('color changed', this.state);
-    //             return state;
-    //         }))
-    //         :
-    //         (this.setState(state => {
-    //             state.cards = newCards;
-    //             state.isClicked = true;
-    //
-    //             console.log('color changed', this.state);
-    //             return state;
-    //         }));
-    //
-    // }
-
     changeColor(cardId) {
-          axios.post('http://localhost:3001/cards/color', {cardId: cardId})
-              .then((res) => {
-                  this.setState({
-                      cards: res.data.cards,
-                      isPare: res.data.isPare,
-                      isClicked: res.data.isClicked,
-                      isLoaded: true
-                  })
+      axios.post('http://localhost:3001/cards/card-open', {cardId: cardId})
+          .then((res) => {
+              this.setState({
+                  cards: res.data.cards,
+                  isPare: res.data.isPare,
+                  isClicked: res.data.isClicked,
+                  isLoaded: true
               })
-              .catch((err) => {
-                  alert('Обшибка запроса :(');
-              });
+          })
+          .catch((err) => {
+              alert('Обшибка запроса :(');
+          });
     }
 
 
@@ -98,30 +72,28 @@ export default class CardSet extends React.Component{
         return (cards.length === 2);
     }
 
-    //установка фона для пары одинаковых карт (их всего 2, нет смысла использовать map) - тут функция с конями в вакууме, я не знаю, как сделать по-другому
-    // функция проверена, работает
+    //установка фона для пары одинаковых карт
     setColor(cards, color) {
-        const newCards = this.state.cards;
-
-        newCards.map((el) => {
-            cards.forEach(function(item) {
-                    return ((el.cardId === item.cardId) ? el.cardStyle = color : el.cardStyle);
-                 });
-        });
-
-        this.setState((state) => {
-            state.cards = newCards;
-            state.isPare = false;
-            state.isClicked = false;
-            return state;
-        });
+        axios.post('http://localhost:3001/cards/color-change', {cards: cards, color: color})
+            .then((res) => {
+                this.setState({
+                    cards: res.data.cards,
+                    isPare: res.data.isPare,
+                    isClicked: res.data.isClicked,
+                    isLoaded: true
+                })
+            })
+            .catch((err) => {
+                alert('Обшибка запроса :(');
+            });
     }
 
     //если цвет карт совпадает, карты будут прозрачными, если нет, то исходного цвета
     // если нажато 3 или 1 карта, то карты становятся исходного цвета
     matchCardsColors =() => {
-        // массив возвращает объект, содержащий 2 открытые карты
+        // массив возвращает объект, содержащий 2 открытые карты, затем эти карты исчезают или закрываются в зависимости от того, одинаковый они или нет
         const openedCards = (this.state.cards.filter((card) => {return ((card.cardStyle !== CARD_BLUE) & (card.cardStyle !== 'transparent'));}));
+        //если открытых карт не 2, то все карты окрашиваются в исходный цвет
         ((this.isTwo(openedCards) && openedCards[0].cardStyle === openedCards[1].cardStyle) ? this.setColor(openedCards,'transparent') : this.setColor(openedCards,CARD_BLUE));
         console.log(openedCards);
     }
