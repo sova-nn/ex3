@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from './Card';
 import {Container, Row} from "react-bootstrap";
+import axios from 'axios';
 
 const CARD_BLUE = '#61dafb';
 
@@ -8,24 +9,9 @@ export default class CardSet extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            isClicked: false,
-            isPare: false,
-            cards: [
-                { cardId: 0, cardStyle: CARD_BLUE, cardStyleColoured: 'darkseagreen'},
-                { cardId: 1, cardStyle: CARD_BLUE, cardStyleColoured: 'darkkhaki'},
-                { cardId: 2, cardStyle: CARD_BLUE, cardStyleColoured: 'darkseagreen'},
-                { cardId: 3, cardStyle: CARD_BLUE, cardStyleColoured: 'darkkhaki'},
-                { cardId: 4, cardStyle: CARD_BLUE, cardStyleColoured: 'sandybrown'},
-                { cardId: 5, cardStyle: CARD_BLUE, cardStyleColoured: 'lightseagreen'},
-                { cardId: 6, cardStyle: CARD_BLUE, cardStyleColoured: 'lightseagreen'},
-                { cardId: 7, cardStyle: CARD_BLUE, cardStyleColoured: 'sandybrown'},
-            ],
-
-            ex: [
-                { cardId: 5, cardStyle: 'CARD_BLUE', cardStyleColoured: 'darkseagreen'},
-                { cardId: 6, cardStyle: 'CARD_BLUE', cardStyleColoured: 'darkseagreen'}
-            ]
+            isLoaded: false,
         };
+
 
         this.changeColor = this.changeColor.bind(this);
         this.empty = this.empty.bind(this);
@@ -35,7 +21,21 @@ export default class CardSet extends React.Component{
 
     }
 
+    loadStatus() {
+        axios.get('http://localhost:3001/state')
+            .then((res) => {
+                this.setState({
+                    cards: res.data.cards,
+                    isPare: res.data.isPare,
+                    isClicked: res.data.isClicked,
+                    isLoaded: true
+                });
+            });
+    }
 
+    componentDidMount(){
+        this.loadStatus();
+    };
 
     //пока возвращение исходного цвета
     empty = () => {
@@ -43,30 +43,53 @@ export default class CardSet extends React.Component{
             state.cards.map((el) => {
                 el.cardStyle = CARD_BLUE;
             });
+            state.isClicked = false;
+            state.isPare = false;
             return state;
         });
+    };
+
+    changePlayer() {
+        this.setState({
+            Player1: true
+        })
     }
 
-    // смена цвета при открытии карты + установка маркера
-    changeColor (cardId){
-        const newCards = this.state.cards;
-        newCards[cardId].cardStyle = newCards[cardId].cardStyleColoured;
-        (this.state.isClicked) ?
-            (this.setState(state => {
-                state.cards = newCards;
-                state.isPare = true;
-                console.log('color changed', this.state);
-                return state;
-            }))
-            :
-            (this.setState(state => {
-                state.cards = newCards;
-                state.isClicked = true;
+    //смена цвета при открытии карты + установка маркера
+    // changeColor (cardId){
+    //     const newCards = this.state.cards;
+    //     newCards[cardId].cardStyle = newCards[cardId].cardStyleColoured;
+    //     (this.state.isClicked) ?
+    //         (this.setState(state => {
+    //             state.cards = newCards;
+    //             state.isPare = true;
+    //             console.log('color changed', this.state);
+    //             return state;
+    //         }))
+    //         :
+    //         (this.setState(state => {
+    //             state.cards = newCards;
+    //             state.isClicked = true;
+    //
+    //             console.log('color changed', this.state);
+    //             return state;
+    //         }));
+    //
+    // }
 
-                console.log('color changed', this.state);
-                return state;
-            }));
-
+    changeColor(cardId) {
+          axios.post('http://localhost:3001/cards/color', {cardId: cardId})
+              .then((res) => {
+                  this.setState({
+                      cards: res.data.cards,
+                      isPare: res.data.isPare,
+                      isClicked: res.data.isClicked,
+                      isLoaded: true
+                  })
+              })
+              .catch((err) => {
+                  alert('Обшибка запроса :(');
+              });
     }
 
 
@@ -106,7 +129,9 @@ export default class CardSet extends React.Component{
     render() {
         const mycards = this.state.cards;
         //this.state.isPare && this.matchCardsColors();
+
         return (
+            this.state.isLoaded ?
             <div>
                 <div className='cardset'>
                     <Container>
@@ -118,7 +143,6 @@ export default class CardSet extends React.Component{
                                     onPress={this.changeColor}
                                     isClicked={this.state.isClicked}
                                     isPare={this.state.isPare}
-                                    //matchCards={setTimeout((this.matchCardsColors), 500)}
                                 />
                             )}
 
@@ -127,6 +151,10 @@ export default class CardSet extends React.Component{
                         </Row>
                     </Container>
                 </div>
+            </div>
+            :
+            <div>
+                Загрузка...
             </div>
         );
     }
